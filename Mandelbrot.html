@@ -1,0 +1,146 @@
+<html><head><title>Mandelbrot</title>
+
+<script id="shader-vs" type="x-shader/x-vertex"> 
+attribute vec3 vPos;
+void main() {
+   gl_Position = vec4(vPos, 1.);
+}
+</script> 
+ 
+<script id="shader-fs" type="x-shader/x-fragment"> 
+precision highp float;
+uniform vec4 tex;
+  void main()
+  {
+		vec4 x=(gl_FragCoord/256.0 -vec4(1.,1.,1.,1.))*tex.z + tex,y=x,z=y;
+
+    float lw = 255.0;
+		for(int w=0; w<255; w++)
+		{
+      if(y.x < 5.0)
+      {   
+        y=x*x;
+        x.y*=x.x*2.0;
+        x.x=y.x-y.y;
+        x+=z;
+        y.x+=y.y;
+        
+        lw-=1.0;
+      }
+		}
+
+  gl_FragColor = sin(vec4(2.0,3.5,5.0,5.0) + (lw/18.0 + log(y.x) / 28.0)) / 2.0 + 0.5;
+  gl_FragColor.w=1.0;
+  }  
+</script> 
+ 
+<script type="text/javascript"> 
+function getShader ( gl, id ){
+   var shaderScript = document.getElementById ( id );
+   var str = "";
+   var k = shaderScript.firstChild;
+   while ( k ){
+     if ( k.nodeType == 3 ) str += k.textContent;
+     k = k.nextSibling;
+   }
+   var shader;
+   if ( shaderScript.type == "x-shader/x-fragment" )
+           shader = gl.createShader ( gl.FRAGMENT_SHADER );
+   else if ( shaderScript.type == "x-shader/x-vertex" )
+           shader = gl.createShader(gl.VERTEX_SHADER);
+   else return null;
+   gl.shaderSource(shader, str);
+   gl.compileShader(shader);
+   if (gl.getShaderParameter(shader, gl.COMPILE_STATUS) == 0)
+      alert(gl.getShaderInfoLog(shader));
+   return shader;
+}
+
+var gl;
+var tLoc, size;
+
+var g_Coords = [
+	+0.30078125, +0.02343750,
+	-0.82421875, +0.18359375,
+	+0.07031250, -0.62109375,
+	-0.07421875, -0.66015625,
+	-1.65625000, +0.00000000,
+];
+
+var last_t, tt = 0xFFFFFFFF;
+var last_i, i = 0;
+
+function webGLStart() {
+   var canvas = document.getElementById("canvas");
+   size = Math.min(window.innerWidth, window.innerHeight) - 35;
+   //canvas.width =  size;   canvas.height = size;
+   canvas.width = 512;   canvas.height = 512;   
+   try { gl = canvas.getContext("experimental-webgl");
+   } catch(e) {}
+   if ( !gl ) {alert("Your browser does not support WebGL"); return;}
+   gl.viewport(0, 0, size, size);
+
+   var prog  = gl.createProgram();
+   gl.attachShader(prog, getShader( gl, "shader-vs" ));
+   gl.attachShader(prog, getShader( gl, "shader-fs" ));
+   gl.linkProgram(prog);
+   gl.useProgram(prog);
+
+   var posAtrLoc = gl.getAttribLocation(prog, "vPos");
+   gl.enableVertexAttribArray( posAtrLoc );
+   var posBuffer = gl.createBuffer();
+   gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+   var vertices = new Float32Array([
+     -1,-1, 0,   1,-1, 0,   1, 1, 0,  -1, 1, 0 ]);
+   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+   gl.vertexAttribPointer(posAtrLoc, 3, gl.FLOAT, false, 0, 0);
+   tLoc = gl.getUniformLocation(prog,"tex");
+//   draw();
+   //gl.uniform2f( gl.getUniformLocation(prog,"tex"), size/2, size/3 );
+   timer = setInterval(draw, 5);
+}
+
+
+function draw() {
+  var rnd = new Date().getTime();
+
+  last_t = tt;
+  tt = (rnd & 8191);
+
+  if (tt < last_t)
+  {
+    last_i = i;
+    ++i;
+    if (i >= g_Coords.length / 2)
+      i = 0;
+  }
+
+  var t1 = tt * (1.0 / 8192.0);
+
+  var f = 4 * (t1 - t1 * t1);
+  f *= f;
+  f *= f;
+  f *= f;
+  f *= f;
+
+  var s = t1;
+  s = s * s * (3 - s - s);
+  s = s * s * (3 - s - s);
+  s = s * s * (3 - s - s);
+  s = s * s * (3 - s - s);
+
+   gl.uniform4f(tLoc, 
+                g_Coords[2*last_i+0] - s * g_Coords[2*last_i+0] + s * g_Coords[2*i+0],
+                g_Coords[2*last_i+1] - s * g_Coords[2*last_i+1] + s * g_Coords[2*i+1],
+                f + (1.0 / 8192.0),
+                1.0);
+   
+   
+   gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+   gl.flush ();
+}
+
+</script> 
+</head><body onload="webGLStart();" onresize="webGLStart();">
+<canvas id="canvas" width="1013" height="1013"></canvas>
+</body></html>
