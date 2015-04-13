@@ -14,10 +14,10 @@ http://blog.tojicode.com/2010/09/itty-bitty-webgl.html
 Click below to play the WebGLMandelbrot versions
 
 *Mandelbrot.html*
-[]![](./WebGLMandelbrot.jpg?raw=true)](http://htmlpreview.github.io/?https://github.com/dtrebilco/WebGLMandelbrot1K/blob/master/Mandelbrot.html)
+[![](./WebGLMandelbrot.jpg?raw=true)](http://htmlpreview.github.io/?https://github.com/dtrebilco/WebGLMandelbrot1K/blob/master/Mandelbrot.html)
 
 *MandelbrotTiny.html*
-[]![](./WebGLMandelbrot.jpg?raw=true)](http://htmlpreview.github.io/?https://github.com/dtrebilco/WebGLMandelbrot1K/blob/master/MandelbrotTiny.html)
+[![](./WebGLMandelbrot.jpg?raw=true)](http://htmlpreview.github.io/?https://github.com/dtrebilco/WebGLMandelbrot1K/blob/master/MandelbrotTiny.html)
 
 *MandelbrotTinyHash.html*
-[]![](./WebGLMandelbrot.jpg?raw=true)](http://htmlpreview.github.io/?https://github.com/dtrebilco/WebGLMandelbrot1K/blob/master/MandelbrotTinyHash.html)
+[![](./WebGLMandelbrot.jpg?raw=true)](http://htmlpreview.github.io/?https://github.com/dtrebilco/WebGLMandelbrot1K/blob/master/MandelbrotTinyHash.html)
